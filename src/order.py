@@ -14,7 +14,14 @@ CATALOG_SERVER = 'http://localhost:5000/'
 book_names = {'1': 'How to get a good grade in 677 in 20 minutes a day',
               '2': 'RPCs for Dummies',
               '3': 'Xen and the Art of Surviving Graduate School',
-              '4': 'Cooking for the Impatient Graduate Student'}
+              '4': 'Cooking for the Impatient Graduate Student',
+              '5': 'How to finish Project 3 on time',
+              '6': 'Why theory classes are so hard',
+              '7': 'Spring in the Pioneer Valley'}
+
+# How to finish Project 3 on time
+# Why theory classes are so hard.
+# Spring in the Pioneer Valley
 
 # Initializing the available topics
 topic_names = ['ds', 'gs']

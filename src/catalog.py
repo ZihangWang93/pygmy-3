@@ -9,7 +9,10 @@ from flask import Flask, jsonify, request
 book_names = {'1': 'How to get a good grade in 677 in 20 minutes a day',
               '2': 'RPCs for Dummies',
               '3': 'Xen and the Art of Surviving Graduate School',
-              '4': 'Cooking for the Impatient Graduate Student'}
+              '4': 'Cooking for the Impatient Graduate Student',
+              '5': 'How to finish Project 3 on time',
+              '6': 'Why theory classes are so hard',
+              '7': 'Spring in the Pioneer Valley'}
 
 # Initializing the available topics
 topic_names = ['ds', 'gs']
@@ -42,6 +45,27 @@ books = [
     {
         'id': 4,
         'title': book_names['4'],
+        'cost': 400,
+        'topic': topic_names[1],
+        'stock': 5
+    },
+    {
+        'id': 5,
+        'title': book_names['5'],
+        'cost': 200,
+        'topic': topic_names[0],
+        'stock': 5
+    },
+    {
+        'id': 6,
+        'title': book_names['6'],
+        'cost': 300,
+        'topic': topic_names[1],
+        'stock': 5
+    },
+    {
+        'id': 7,
+        'title': book_names['7'],
         'cost': 400,
         'topic': topic_names[1],
         'stock': 5
