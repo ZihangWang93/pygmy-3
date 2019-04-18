@@ -40,8 +40,9 @@ def pp_json(json_thing, sort=True, indents=4):
 def update_stock():
     id = random.randint(1, 4)
     b = requests.post(CATALOG_SERVER_1 + 'update?item=' + str(id), json={'delta': 2})
-    assert b.status_code == 200, 'Periodic update failed!'
-    print('Periodic update successful for', book_names[str(id)])
+    c = requests.post(CATALOG_SERVER_2 + 'update?item=' + str(id), json={'delta': 2})
+    assert b.status_code == 200 and c.status_code == 200, 'Periodic update failed!'
+    print('Periodic updates successful for', book_names[str(id)])
 
 
 # Method for getting the performance stats for search, lookup and buy
@@ -77,8 +78,8 @@ if __name__ == '__main__':
     CATALOG_SERVER_1 = 'http://' + str(df['IP'][0]) + ':' + str(df['Port'][0]) + '/'
     ORDER_SERVER_1 = 'http://' + str(df['IP'][1]) + ':' + str(df['Port'][1]) + '/'
     FRONTEND_SERVER = 'http://' + str(df['IP'][2]) + ':' + str(df['Port'][2]) + '/'
-    # CATALOG_SERVER_2 = 'http://' + str(df['IP'][3]) + ':' + str(df['Port'][0]) + '/'
-    # ORDER_SERVER_2 = 'http://' + str(df['IP'][4]) + ':' + str(df['Port'][1]) + '/'
+    CATALOG_SERVER_2 = 'http://' + str(df['IP'][3]) + ':' + str(df['Port'][0]) + '/'
+    ORDER_SERVER_2 = 'http://' + str(df['IP'][4]) + ':' + str(df['Port'][1]) + '/'
 
     # test_response_times(mode='search')  # Uncomment to run ART per-tier for this search()
     # test_response_times(mode='lookup') # Uncomment to run ART per-tier for this search()

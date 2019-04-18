@@ -31,6 +31,7 @@ def search():
 
     if topic is not None:
         if dictionary.get(topic) is not None:
+            print('Accessing cache')
             return dictionary.get(topic)
         else:
             print('Starting a search for topic', topic)
@@ -52,6 +53,7 @@ def lookup():
     item_number = request.args.get('item', type=int)
     if item_number is not None:
         if dictionary.get(item_number) is not None:
+            print('Accessing cache')
             return dictionary.get(item_number)
         else:
             print('Starting a lookup for item', book_names[str(item_number)])
@@ -107,4 +109,4 @@ if __name__ == '__main__':
     catalogs = [CATALOG_SERVER_1, CATALOG_SERVER_2]
     orders = [ORDER_SERVER_1, ORDER_SERVER_2]
 
-    app.run(host='0.0.0.0', port=df['Port'][2], debug=True)
+app.run(host='0.0.0.0', port=df['Port'][2], debug=True)
