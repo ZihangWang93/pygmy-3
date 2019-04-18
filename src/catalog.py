@@ -3,6 +3,7 @@ import json
 from time import time
 
 import pandas as pd
+import requests
 from flask import Flask, jsonify, request
 
 # Initializing the book names as per the assignment
@@ -114,16 +115,22 @@ def update_books():
         for b in books:
             if b['id'] == id:
                 b['cost'] = cost
+                cur_topic = b['topic']
 
     delta = request.json.get('delta')
     if delta is not None:  # query to update number of item
         for b in books:
             if b['id'] == id:
                 b['stock'] += delta
+                cur_topic = b['topic']
 
     json.dump(books, open('catalog.json', 'w'))
     ret = jsonify({'books': [b for b in books if b['id'] == id]})
     print('Update successful!')
+    print('Invalidating', str(book_names[id]))
+    invalidate_item = requests.get(FRONTEND_SERVER + 'invalidate?item=' + str(id))
+    invalidate_topic = requests.get(FRONTEND_SERVER + 'invalidate?topic=' + cur_topic)
+    assert invalidate_item.status_code == 200 and invalidate_topic.status_code == 200
     with open('./times/catalog_buy_time.txt', 'a') as f:
         f.write(str(time() - catalog_start_time) + '\n')
     return ret
