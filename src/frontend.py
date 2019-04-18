@@ -89,13 +89,15 @@ def invalidate():
     if topic is not None:  # query by subject
         print('Invalidating ', topic)
         dictionary[topic] = None
+        return 'Succesfully invalidated topic'
 
     id = request.args.get('item', type=int)
     if id is not None:  # query by item
         print('Invalidating', book_names[str(id)])
         dictionary[id] = None
+        return 'Succesfully invalidated item'
 
-    return
+    return 'Invalidation Error'
 
 
 if __name__ == '__main__':
