@@ -20,6 +20,9 @@ topics = ['ds', 'gs']
 
 app = Flask(__name__)
 
+c_state = 0
+o_state = 1
+
 
 # REST endpoint for search
 @app.route('/search', methods=['GET'])
@@ -32,7 +35,9 @@ def search():
         else:
             print('Starting a search for topic', topic)
             frontend_search_start_time = time()
-            r = requests.get(CATALOG_SERVER_1 + 'query?topic=' + topic)
+            r = requests.get(catalogs[c_state] + 'query?topic=' + topic)
+            global c_state
+            c_state = 1 - c_state
             dictionary[topic] = r
             with open('times/frontend_search_time.txt', 'a') as f:
                 f.write(str(time() - frontend_search_start_time) + '\n')
@@ -51,7 +56,9 @@ def lookup():
         else:
             print('Starting a lookup for item', book_names[str(item_number)])
             frontend_lookup_start_time = time()
-            r = requests.get(CATALOG_SERVER_1 + 'query?item=' + str(item_number))
+            r = requests.get(catalogs[c_state] + 'query?item=' + str(item_number))
+            global c_state
+            c_state = 1 - c_state
             dictionary[item_number] = r
             with open('./times/frontend_lookup_time.txt', 'a') as f:
                 f.write(str(time() - frontend_lookup_start_time) + '\n')
@@ -65,7 +72,9 @@ def buy():
     if item_number is not None:
         print('Starting a buy request for item', book_names[str(item_number)])
         frontend_buy_start_time = time()
-        r = requests.get(ORDER_SERVER_1 + 'buy?item=' + str(item_number))
+        r = requests.get(orders[o_state] + 'buy?item=' + str(item_number))
+        global o_state
+        o_state = 1 - o_state
         with open('./times/frontend_buy_time.txt', 'a') as f:
             f.write(str(time() - frontend_buy_start_time) + '\n')
         return r.text
@@ -92,7 +101,10 @@ if __name__ == '__main__':
     CATALOG_SERVER_1 = 'http://' + str(df['IP'][0]) + ':' + str(df['Port'][0]) + '/'
     ORDER_SERVER_1 = 'http://' + str(df['IP'][1]) + ':' + str(df['Port'][1]) + '/'
     FRONTEND_SERVER = 'http://' + str(df['IP'][2]) + ':' + str(df['Port'][2]) + '/'
-    # CATALOG_SERVER_2 = 'http://' + str(df['IP'][3]) + ':' + str(df['Port'][0]) + '/'
-    # ORDER_SERVER_2 = 'http://' + str(df['IP'][4]) + ':' + str(df['Port'][1]) + '/'
+    CATALOG_SERVER_2 = 'http://' + str(df['IP'][3]) + ':' + str(df['Port'][0]) + '/'
+    ORDER_SERVER_2 = 'http://' + str(df['IP'][4]) + ':' + str(df['Port'][1]) + '/'
 
-app.run(host='0.0.0.0', port=df['Port'][2], debug=True)
+    catalogs = [CATALOG_SERVER_1, CATALOG_SERVER_2]
+    orders = [ORDER_SERVER_1, ORDER_SERVER_2]
+
+    app.run(host='0.0.0.0', port=df['Port'][2], debug=True)
