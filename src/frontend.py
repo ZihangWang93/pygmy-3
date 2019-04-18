@@ -39,7 +39,7 @@ def search():
             r = requests.get(catalogs[c_state] + 'query?topic=' + topic)
             global c_state
             c_state = 1 - c_state
-            dictionary[topic] = r
+            dictionary[topic] = r.text
             with open('times/frontend_search_time.txt', 'a') as f:
                 f.write(str(time() - frontend_search_start_time) + '\n')
             assert r.status_code == 200, 'Search failed!'
@@ -61,7 +61,7 @@ def lookup():
             r = requests.get(catalogs[c_state] + 'query?item=' + str(item_number))
             global c_state
             c_state = 1 - c_state
-            dictionary[item_number] = r
+            dictionary[item_number] = r.text
             with open('./times/frontend_lookup_time.txt', 'a') as f:
                 f.write(str(time() - frontend_lookup_start_time) + '\n')
             return r.text
