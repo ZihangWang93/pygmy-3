@@ -1,14 +1,11 @@
 #!flask/bin/python
-from time import time
 import datetime
 import os
+from time import time
 
 import pandas as pd
 import requests
 from flask import Flask, request
-
-# URL of the catalog server
-CATALOG_SERVER = 'http://localhost:5000/'
 
 # Initializing the book names as per the assignment
 book_names = {'1': 'How to get a good grade in 677 in 20 minutes a day',
@@ -40,10 +37,10 @@ def buy_order():
     id = request.args.get('item', type=int)
     print('Querying for', book_names[str(id)])
     order_buy_start_time = time()
-    r = requests.get(CATALOG_SERVER + 'query?item=' + str(id))
+    r = requests.get(CATALOG_SERVER_1 + 'query?item=' + str(id))
     print(r.json())
     if r.json()['books'][0]['stock'] > 0:  # Checking for item to be in stock
-        b = requests.post(CATALOG_SERVER + 'update?item=' + str(id), json={'delta': -1})
+        b = requests.post(CATALOG_SERVER_1 + 'update?item=' + str(id), json={'delta': -1})
         assert b.status_code == 200
         with open('./times/order_buy_time.txt', 'a') as f:
             f.write(str(time() - order_buy_start_time) + '\n')
@@ -60,8 +57,10 @@ def buy_order():
 
 if __name__ == '__main__':
     df = pd.read_csv('sv_info.csv')
-    CATALOG_SERVER = 'http://' + str(df['IP'][0]) + ':' + str(df['Port'][0]) + '/'
-    ORDER_SERVER = 'http://' + str(df['IP'][1]) + ':' + str(df['Port'][1]) + '/'
+    CATALOG_SERVER_1 = 'http://' + str(df['IP'][0]) + ':' + str(df['Port'][0]) + '/'
+    ORDER_SERVER_1 = 'http://' + str(df['IP'][1]) + ':' + str(df['Port'][1]) + '/'
     FRONTEND_SERVER = 'http://' + str(df['IP'][2]) + ':' + str(df['Port'][2]) + '/'
+    # CATALOG_SERVER_2 = 'http://' + str(df['IP'][3]) + ':' + str(df['Port'][0]) + '/'
+    # ORDER_SERVER_2 = 'http://' + str(df['IP'][4]) + ':' + str(df['Port'][1]) + '/'
 
-    app.run(host='0.0.0.0', port=df['Port'][1], debug=True)
+app.run(host='0.0.0.0', port=df['Port'][1], debug=True)
