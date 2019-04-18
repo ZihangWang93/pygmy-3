@@ -95,6 +95,8 @@ def invalidate():
         print('Invalidating', book_names[str(id)])
         dictionary[id] = None
 
+    return
+
 
 if __name__ == '__main__':
     dictionary = {}
