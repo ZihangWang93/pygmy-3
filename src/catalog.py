@@ -1,6 +1,7 @@
 #!flask/bin/python
 import json
 from time import time
+import sys
 
 import pandas as pd
 import requests
@@ -119,6 +120,9 @@ def update_books():
 
     delta = request.json.get('delta')
     if delta is not None:  # query to update number of item
+        order = request.json.get('order')
+        if order:
+            b = requests.post(CATALOG_SERVERS[1 - server_id] + 'update?item=' + str(id), json={'delta': -1, 'order': 0})
         for b in books:
             if b['id'] == id:
                 b['stock'] += delta
@@ -137,11 +141,13 @@ def update_books():
 
 
 if __name__ == '__main__':
+    server_id = int(sys.argv[1])
     df = pd.read_csv('sv_info.csv')
     CATALOG_SERVER_1 = 'http://' + str(df['IP'][0]) + ':' + str(df['Port'][0]) + '/'
     ORDER_SERVER_1 = 'http://' + str(df['IP'][1]) + ':' + str(df['Port'][1]) + '/'
     FRONTEND_SERVER = 'http://' + str(df['IP'][2]) + ':' + str(df['Port'][2]) + '/'
     CATALOG_SERVER_2 = 'http://' + str(df['IP'][3]) + ':' + str(df['Port'][0]) + '/'
     ORDER_SERVER_2 = 'http://' + str(df['IP'][4]) + ':' + str(df['Port'][1]) + '/'
+    CATALOG_SERVERS = [CATALOG_SERVER_1, CATALOG_SERVER_2]
 
-    app.run(host='0.0.0.0', port=df['Port'][0], debug=True)
+app.run(host='0.0.0.0', port=df['Port'][0], debug=True)
