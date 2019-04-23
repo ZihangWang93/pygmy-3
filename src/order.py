@@ -58,7 +58,7 @@ def buy_order():
 
 @app.route('/heartbeat', methods=['GET'])
 def heartbeat():
-    print('Heartbeat succesful!')
+    return 'Heartbeat succesful!'
 
 
 if __name__ == '__main__':
