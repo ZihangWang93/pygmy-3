@@ -1,8 +1,17 @@
+import datetime
 from time import time
 
 import pandas as pd
 import requests
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, request
+
+DATETIME_FORMAT = '%m/%d %H:%M'
+
+
+def format_now():
+    return datetime.datetime.now().strftime(DATETIME_FORMAT)
+
 
 # Initializing the book names as per the assignment
 book_names = {'1': 'How to get a good grade in 677 in 20 minutes a day',
@@ -100,6 +109,18 @@ def invalidate():
     return 'Invalidation Error'
 
 
+def heartbeat():
+    print('Getting Heartbeats')
+    heart_o1 = requests.get(ORDER_SERVER_1 + 'heartbeat')
+    heart_o2 = requests.get(ORDER_SERVER_1 + 'heartbeat')
+    heart_c1 = requests.get(ORDER_SERVER_1 + 'heartbeat')
+    heart_c2 = requests.get(ORDER_SERVER_1 + 'heartbeat')
+
+    assert (heart_o1.status_code == 200)
+    assert (heart_o2.status_code == 200)
+    assert (heart_c1.status_code == 200)
+    assert (heart_c2.status_code == 200)
+
 if __name__ == '__main__':
     dictionary = {}
 
@@ -113,4 +134,8 @@ if __name__ == '__main__':
     catalogs = [CATALOG_SERVER_1, CATALOG_SERVER_2]
     orders = [ORDER_SERVER_1, ORDER_SERVER_2]
 
-app.run(host='0.0.0.0', port=df['Port'][2], debug=True)
+    app.run(host='0.0.0.0', port=df['Port'][2], debug=True)
+
+    scheduler = BackgroundScheduler()
+    job = scheduler.add_job(heartbeat, 'interval', seconds=1)
+    scheduler.start()

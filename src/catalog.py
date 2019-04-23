@@ -136,6 +136,11 @@ def update_books():
     return ret
 
 
+@app.route('/heartbeat', methods=['GET'])
+def heartbeat():
+    print('Heartbeat succesful!')
+
+
 if __name__ == '__main__':
     df = pd.read_csv('sv_info.csv')
     CATALOG_SERVER_1 = 'http://' + str(df['IP'][0]) + ':' + str(df['Port'][0]) + '/'
