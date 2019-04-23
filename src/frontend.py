@@ -134,8 +134,9 @@ if __name__ == '__main__':
     catalogs = [CATALOG_SERVER_1, CATALOG_SERVER_2]
     orders = [ORDER_SERVER_1, ORDER_SERVER_2]
 
+    scheduler = BackgroundScheduler()
+    job = scheduler.add_job(heartbeat, 'interval', seconds=5)
+    scheduler.start()
+
     app.run(host='0.0.0.0', port=df['Port'][2], debug=True)
 
-    scheduler = BackgroundScheduler()
-    job = scheduler.add_job(heartbeat, 'interval', seconds=1)
-    scheduler.start()
