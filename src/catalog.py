@@ -140,6 +140,11 @@ def update_books():
     return ret
 
 
+@app.route('/heartbeat', methods=['GET'])
+def heartbeat():
+    print('Heartbeat succesful!')
+
+
 if __name__ == '__main__':
     server_id = int(sys.argv[1])
     df = pd.read_csv('sv_info.csv')

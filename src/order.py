@@ -30,6 +30,7 @@ if not os.path.isfile('order_log.txt'):
     logs = open("order_log.txt", "x")
     logs.close()
 
+
 # REST endpoint for buy
 @app.route('/buy', methods=['GET'])
 def buy_order():
@@ -53,6 +54,11 @@ def buy_order():
         logs.write(str(datetime.datetime.now()) + ':Out of Stock - ' + book_names[str(id)] + '\n')
         print('Out of Stock')
         return 'Out of Stock'
+
+
+@app.route('/heartbeat', methods=['GET'])
+def heartbeat():
+    print('Heartbeat succesful!')
 
 
 if __name__ == '__main__':
