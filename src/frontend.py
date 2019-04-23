@@ -112,14 +112,15 @@ def invalidate():
 def heartbeat():
     print('Getting Heartbeats')
     heart_o1 = requests.get(ORDER_SERVER_1 + 'heartbeat')
-    heart_o2 = requests.get(ORDER_SERVER_1 + 'heartbeat')
-    heart_c1 = requests.get(ORDER_SERVER_1 + 'heartbeat')
-    heart_c2 = requests.get(ORDER_SERVER_1 + 'heartbeat')
+    heart_o2 = requests.get(ORDER_SERVER_2 + 'heartbeat')
+    heart_c1 = requests.get(CATALOG_SERVER_1 + 'heartbeat')
+    heart_c2 = requests.get(CATALOG_SERVER_2 + 'heartbeat')
 
-    assert (heart_o1.status_code == 200)
-    assert (heart_o2.status_code == 200)
-    assert (heart_c1.status_code == 200)
-    assert (heart_c2.status_code == 200)
+    assert heart_o1.status_code == 200
+    assert heart_o2.status_code == 200
+    assert heart_c1.status_code == 200
+    assert heart_c2.status_code == 200
+
 
 if __name__ == '__main__':
     dictionary = {}
@@ -139,4 +140,3 @@ if __name__ == '__main__':
     scheduler.start()
 
     app.run(host='0.0.0.0', port=df['Port'][2], debug=True)
-
