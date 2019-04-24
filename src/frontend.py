@@ -159,4 +159,3 @@ if __name__ == '__main__':
     scheduler.start()
 
     app.run(host='0.0.0.0', port=df['Port'][2], debug=True)
-
