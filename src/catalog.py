@@ -164,7 +164,8 @@ if __name__ == '__main__':
     resynced = False
 
     r = requests.get(FRONTEND_SERVER + 'crashed?id=' + str(server_id))
-    if r.text is 'True':
+    print(r.text, type(r.text))
+    if r.text == 'True':
         # re-sync process in case of a failure
         for i in range(len(CATALOG_SERVERS)):
             if i != server_id and requests.get(CATALOG_SERVERS[i] + 'heartbeat').status_code == 200:
@@ -177,4 +178,5 @@ if __name__ == '__main__':
         json.dump(books, open('catalog.json', 'w'))
 
 
-app.run(host='0.0.0.0', port=df['Port'][0], debug=True)
+    app.run(host='0.0.0.0', port=df['Port'][0], debug=False)
+

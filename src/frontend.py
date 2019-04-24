@@ -149,7 +149,7 @@ def heartbeat():
     print('Getting Heartbeats')
     global c_state_heart
     global o_state_heart
-
+    global crashed
     try:
         ro1 = requests.get(ORDER_SERVER_1 + 'heartbeat')
     except:
@@ -171,6 +171,7 @@ def heartbeat():
     except:
         print('Catalog Server 1 is down')
         c_state_heart[0] = False
+        crashed[0] = True
     else:
         c_state_heart[0] = True
 
@@ -178,11 +179,12 @@ def heartbeat():
         rc2 = requests.get(CATALOG_SERVER_2 + 'heartbeat')
     except:
         print('Catalog Server 2 is down')
+        crashed[1] = True
         c_state_heart[1] = False
     else:
         c_state_heart[1] = True
 
-
+    
 if __name__ == '__main__':
     dictionary = {}
 
