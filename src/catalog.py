@@ -121,8 +121,11 @@ def update_books():
         if order:
             for i in range(len(CATALOG_SERVERS)):
                 if i != server_id:
-                    b = requests.post(CATALOG_SERVERS[i] + 'update?item=' + str(id), json={'delta': -1, 'order': 0})
-        for b in books:
+                    try:
+                        b = requests.post(CATALOG_SERVERS[i] + 'update?item=' + str(id), json={'delta': -1, 'order': 0})
+                    except:
+                        print('Replica seems to be down, will synchronize when it is back up')    
+    for b in books:
             if b['id'] == id:
                 b['stock'] += delta
                 cur_topic = b['topic']
