@@ -161,7 +161,7 @@ if __name__ == '__main__':
     resynced = False
 
     r = requests.get(FRONTEND_SERVER + 'crashed?id=' + str(server_id))
-    if r.text is "True":
+    if r.text is 'True':
         # re-sync process in case of a failure
         for i in range(len(CATALOG_SERVERS)):
             if i != server_id and requests.get(CATALOG_SERVERS[i] + 'heartbeat').status_code == 200:

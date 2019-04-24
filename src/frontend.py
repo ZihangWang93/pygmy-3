@@ -44,8 +44,8 @@ def get_crashed():
     server_id = request.args.get('id', type=str)
     if crashed[int(server_id)]:
         crashed[int(server_id)] = False
-        return True
-    return False
+        return 'True'
+    return 'False'
 
 
 @app.route('/getcatalog', methods=['GET'])
