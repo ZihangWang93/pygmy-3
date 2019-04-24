@@ -40,7 +40,7 @@ crashed = [False, False]
 
 
 @app.route('/crashed', methods=['GET'])
-def get_catalog_server_id():
+def get_crashed():
     server_id = request.args.get('id', type=str)
     if crashed[server_id]:
         crashed[server_id] = False
