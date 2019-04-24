@@ -159,13 +159,15 @@ if __name__ == '__main__':
     CATALOG_SERVERS = [CATALOG_SERVER_1, CATALOG_SERVER_2]
 
     resynced = False
-    # re-sync process in case of a failure
-    for i in range(len(CATALOG_SERVERS)):
-        if i != server_id and requests.get(CATALOG_SERVERS[i] + 'heartbeat').status_code == 200:
-            json.dump(requests.get(CATALOG_SERVERS[i] + 'resync').text, open('catalog.json', 'w'))
-            resynced = True
 
-    if not resynced:
+    r = requests.get(FRONTEND_SERVER + 'crashed?id=' + str(server_id))
+    if r.text is "True":
+        # re-sync process in case of a failure
+        for i in range(len(CATALOG_SERVERS)):
+            if i != server_id and requests.get(CATALOG_SERVERS[i] + 'heartbeat').status_code == 200:
+                json.dump(requests.get(CATALOG_SERVERS[i] + 'resync').json(), open('catalog.json', 'w'))
+                resynced = True
+    else:
         global books
         json.dump(books, open('catalog.json', 'w'))
 
