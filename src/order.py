@@ -40,7 +40,7 @@ def buy_order():
     order_buy_start_time = time()
     c_state = int(requests.get(FRONTEND_SERVER + 'getcatalog').text)
     r = requests.get(CATALOG_SERVERS[c_state] + 'query?item=' + str(id))
-    if r.status_code != 200 and not heartbeat(c_state):
+    if r.status_code != 200:
         c_state = int(requests.get(FRONTEND_SERVER + 'getcatalog').text)
         r = requests.get(CATALOG_SERVERS[c_state] + 'query?item=' + str(id))
     print(r.json())

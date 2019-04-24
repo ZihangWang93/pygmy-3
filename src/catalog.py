@@ -74,9 +74,6 @@ books = [
     }
 ]
 
-# Initialising the persistent data
-json.dump(books, open('catalog.json', 'w'))
-
 
 # REST endpoint for query
 @app.route('/query', methods=['GET'])
@@ -122,7 +119,7 @@ def update_books():
     if delta is not None:  # query to update number of item
         order = request.json.get('order')
         if order:
-            for i in len(CATALOG_SERVERS):
+            for i in range(len(CATALOG_SERVERS)):
                 if i != server_id:
                     b = requests.post(CATALOG_SERVERS[i] + 'update?item=' + str(id), json={'delta': -1, 'order': 1})
         for b in books:
@@ -146,6 +143,10 @@ def update_books():
 def heartbeat():
     return 'Heartbeat succesful!'
 
+@app.route('/resync', methods=['GET'])
+def resync():
+    with open('catalog.json') as f:
+        return f.readline()
 
 if __name__ == '__main__':
     server_id = int(sys.argv[1])
@@ -156,5 +157,17 @@ if __name__ == '__main__':
     CATALOG_SERVER_2 = 'http://' + str(df['IP'][3]) + ':' + str(df['Port'][0]) + '/'
     ORDER_SERVER_2 = 'http://' + str(df['IP'][4]) + ':' + str(df['Port'][1]) + '/'
     CATALOG_SERVERS = [CATALOG_SERVER_1, CATALOG_SERVER_2]
+
+    resynced = False
+    # re-sync process in case of a failure
+    for i in range(len(CATALOG_SERVERS)):
+        if i != server_id and requests.get(CATALOG_SERVERS[i] + 'heartbeat').status_code == 200:
+            json.dump(requests.get(CATALOG_SERVERS[i] + 'resync').text, open('catalog.json', 'w'))
+            resynced = True
+
+    if not resynced:
+        global books
+        json.dump(books, open('catalog.json', 'w'))
+
 
 app.run(host='0.0.0.0', port=df['Port'][0], debug=True)
