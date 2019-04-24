@@ -124,11 +124,11 @@ def update_books():
                     try:
                         b = requests.post(CATALOG_SERVERS[i] + 'update?item=' + str(id), json={'delta': -1, 'order': 0})
                     except:
-                        print('Replica seems to be down, will synchronize when it is back up')    
+                        print('Replica seems to be down, will synchronize when it is back up')
     for b in books:
-            if b['id'] == id:
-                b['stock'] += delta
-                cur_topic = b['topic']
+        if b['id'] == id:
+            b['stock'] += delta
+            cur_topic = b['topic']
 
     json.dump(books, open('catalog.json', 'w'))
     ret = jsonify({'books': [b for b in books if b['id'] == id]})
@@ -146,10 +146,12 @@ def update_books():
 def heartbeat():
     return 'Heartbeat successful!'
 
+
 @app.route('/resync', methods=['GET'])
 def resync():
     with open('catalog.json') as f:
         return f.readline()
+
 
 if __name__ == '__main__':
     server_id = int(sys.argv[1])
@@ -171,12 +173,10 @@ if __name__ == '__main__':
             if i != server_id and requests.get(CATALOG_SERVERS[i] + 'heartbeat').status_code == 200:
                 print('Trying to resync')
                 json.dump(requests.get(CATALOG_SERVERS[i] + 'resync').json(), open('catalog.json', 'w'))
-                print('Successfully Resynced with Catalog Server', i+1)
+                print('Successfully Resynced with Catalog Server', i + 1)
                 resynced = True
     else:
         global books
         json.dump(books, open('catalog.json', 'w'))
 
-
     app.run(host='0.0.0.0', port=df['Port'][0], debug=False)
-
