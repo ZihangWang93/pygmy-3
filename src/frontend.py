@@ -57,14 +57,15 @@ def get_order_server_id():
 @app.route('/search', methods=['GET'])
 def search():
     topic = request.args.get('topic', type=str)
-
+    frontend_search_start_time = time()
     if topic is not None:
         if dictionary.get(topic) is not None:
             print('Accessing cache')
+            with open('times/frontend_search_time.txt', 'a') as f:
+                f.write(str(time() - frontend_search_start_time) + '\n')
             return dictionary.get(topic)
         else:
             print('Starting a search for topic', topic)
-            frontend_search_start_time = time()
             c_state = get_catalog_server_id()
             r = requests.get(catalogs[c_state] + 'query?topic=' + topic)
             dictionary[topic] = r.text
@@ -80,13 +81,15 @@ def search():
 @app.route('/lookup', methods=['GET'])
 def lookup():
     item_number = request.args.get('item', type=int)
+    frontend_lookup_start_time = time()
     if item_number is not None:
         if dictionary.get(item_number) is not None:
             print('Accessing cache')
+            with open('./times/frontend_lookup_time.txt', 'a') as f:
+                f.write(str(time() - frontend_lookup_start_time) + '\n')
             return dictionary.get(item_number)
         else:
             print('Starting a lookup for item', book_names[str(item_number)])
-            frontend_lookup_start_time = time()
             c_state = get_catalog_server_id()
             r = requests.get(catalogs[c_state] + 'query?item=' + str(item_number))
             dictionary[item_number] = r.text
@@ -106,10 +109,10 @@ def buy():
         frontend_buy_start_time = time()
         o_state = get_order_server_id()
         r = requests.get(orders[o_state] + 'buy?item=' + str(item_number))
-        with open('./times/frontend_buy_time.txt', 'a') as f:
-            f.write(str(time() - frontend_buy_start_time) + '\n')
         if r.status_code != 200 and not o_state_heart[o_state]:
             r = requests.get(orders[get_order_server_id()] + 'buy?item=' + str(item_number))
+        with open('./times/frontend_buy_time.txt', 'a') as f:
+            f.write(str(time() - frontend_buy_start_time) + '\n')
         return r.text
 
 
