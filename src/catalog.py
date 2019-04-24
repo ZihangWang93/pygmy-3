@@ -165,7 +165,9 @@ if __name__ == '__main__':
         # re-sync process in case of a failure
         for i in range(len(CATALOG_SERVERS)):
             if i != server_id and requests.get(CATALOG_SERVERS[i] + 'heartbeat').status_code == 200:
+                print('Trying to resync')
                 json.dump(requests.get(CATALOG_SERVERS[i] + 'resync').json(), open('catalog.json', 'w'))
+                print('Successfully Resynced with Catalog Server', i+1)
                 resynced = True
     else:
         global books

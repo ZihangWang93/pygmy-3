@@ -47,7 +47,6 @@ def buy_order():
     print(r.json())
     if r.json()['books'][0]['stock'] > 0:  # Checking for item to be in stock
         b = requests.post(CATALOG_SERVERS[c_state] + 'update?item=' + str(id), json={'delta': -1, 'order': 1})
-        assert b.status_code == 200
         with open('./times/order_buy_time.txt', 'a') as f:
             f.write(str(time() - order_buy_start_time) + '\n')
         logs.write(str(datetime.datetime.now()) + ':Bought - ' + book_names[str(id)] + '\n')
