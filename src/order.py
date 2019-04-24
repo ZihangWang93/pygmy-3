@@ -38,10 +38,14 @@ def buy_order():
     id = request.args.get('item', type=int)
     print('Querying for', book_names[str(id)])
     order_buy_start_time = time()
-    r = requests.get(CATALOG_SERVERS[server_id] + 'query?item=' + str(id))
+    c_state = int(requests.get(FRONTEND_SERVER + 'getcatalog').text)
+    r = requests.get(CATALOG_SERVERS[c_state] + 'query?item=' + str(id))
+    if r.status_code != 200 and not heartbeat(c_state):
+        c_state = int(requests.get(FRONTEND_SERVER + 'getcatalog').text)
+        r = requests.get(CATALOG_SERVERS[c_state] + 'query?item=' + str(id))
     print(r.json())
     if r.json()['books'][0]['stock'] > 0:  # Checking for item to be in stock
-        b = requests.post(CATALOG_SERVERS[server_id] + 'update?item=' + str(id), json={'delta': -1, 'order': 1})
+        b = requests.post(CATALOG_SERVERS[c_state] + 'update?item=' + str(id), json={'delta': -1, 'order': 1})
         assert b.status_code == 200
         with open('./times/order_buy_time.txt', 'a') as f:
             f.write(str(time() - order_buy_start_time) + '\n')

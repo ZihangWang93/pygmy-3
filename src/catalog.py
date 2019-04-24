@@ -122,7 +122,9 @@ def update_books():
     if delta is not None:  # query to update number of item
         order = request.json.get('order')
         if order:
-            b = requests.post(CATALOG_SERVERS[1 - server_id] + 'update?item=' + str(id), json={'delta': -1, 'order': 0})
+            for i in len(CATALOG_SERVERS):
+                if i != server_id:
+                    b = requests.post(CATALOG_SERVERS[i] + 'update?item=' + str(id), json={'delta': -1, 'order': 1})
         for b in books:
             if b['id'] == id:
                 b['stock'] += delta

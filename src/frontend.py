@@ -5,6 +5,7 @@ import pandas as pd
 import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, request
+import itertools as it
 
 DATETIME_FORMAT = '%m/%d %H:%M'
 
@@ -29,8 +30,27 @@ topics = ['ds', 'gs']
 
 app = Flask(__name__)
 
-c_state = 0
-o_state = 1
+c_state_heart = [False, False]
+o_state_heart = [False, False]
+
+c_state_global = it.cycle([0,1])
+o_state_global = it.cycle([0,1])
+
+
+@app.route('/getcatalog', methods=['GET'])
+def get_catalog_server_id():
+    server_id = next(c_state_global)
+    if c_state_heart[server_id]:
+        return server_id
+    return get_catalog_server_id()
+
+
+@app.route('/getorder', methods=['GET'])
+def get_order_server_id():
+    server_id = next(o_state_global)
+    if o_state_heart[server_id]:
+        return server_id
+    return get_catalog_server_id()
 
 
 # REST endpoint for search
@@ -45,14 +65,14 @@ def search():
         else:
             print('Starting a search for topic', topic)
             frontend_search_start_time = time()
+            c_state = get_catalog_server_id()
             r = requests.get(catalogs[c_state] + 'query?topic=' + topic)
-            global c_state
-            c_state = 1 - c_state
             dictionary[topic] = r.text
             with open('times/frontend_search_time.txt', 'a') as f:
                 f.write(str(time() - frontend_search_start_time) + '\n')
+            if r.status_code != 200 and not c_state_heart[c_state]:
+                r = requests.get(catalogs[get_catalog_server_id()] + 'query?topic=' + topic)
             assert r.status_code == 200, 'Search failed!'
-
             return r.text
 
 
@@ -67,12 +87,13 @@ def lookup():
         else:
             print('Starting a lookup for item', book_names[str(item_number)])
             frontend_lookup_start_time = time()
+            c_state = get_catalog_server_id()
             r = requests.get(catalogs[c_state] + 'query?item=' + str(item_number))
-            global c_state
-            c_state = 1 - c_state
             dictionary[item_number] = r.text
             with open('./times/frontend_lookup_time.txt', 'a') as f:
                 f.write(str(time() - frontend_lookup_start_time) + '\n')
+            if r.status_code != 200 and not c_state_heart[c_state]:
+                r = requests.get(catalogs[get_catalog_server_id()] + 'query?item=' + str(item_number))
             return r.text
 
 
@@ -83,11 +104,12 @@ def buy():
     if item_number is not None:
         print('Starting a buy request for item', book_names[str(item_number)])
         frontend_buy_start_time = time()
+        o_state = get_order_server_id()
         r = requests.get(orders[o_state] + 'buy?item=' + str(item_number))
-        global o_state
-        o_state = 1 - o_state
         with open('./times/frontend_buy_time.txt', 'a') as f:
             f.write(str(time() - frontend_buy_start_time) + '\n')
+        if r.status_code != 200 and not o_state_heart[o_state]:
+            r = requests.get(orders[get_order_server_id()] + 'buy?item=' + str(item_number))
         return r.text
 
 
@@ -111,15 +133,13 @@ def invalidate():
 
 def heartbeat():
     print('Getting Heartbeats')
-    heart_o1 = requests.get(ORDER_SERVER_1 + 'heartbeat')
-    heart_o2 = requests.get(ORDER_SERVER_1 + 'heartbeat')
-    heart_c1 = requests.get(ORDER_SERVER_1 + 'heartbeat')
-    heart_c2 = requests.get(ORDER_SERVER_1 + 'heartbeat')
+    global c_state_heart
+    global o_state_heart
+    o_state_heart = [(requests.get(ORDER_SERVER_1 + 'heartbeat').status_code == 200),
+                     (requests.get(ORDER_SERVER_2 + 'heartbeat').status_code == 200)]
+    c_state_heart = [(requests.get(CATALOG_SERVER_1 + 'heartbeat').status_code == 200),
+                     (requests.get(CATALOG_SERVER_2 + 'heartbeat').status_code == 200)]
 
-    assert (heart_o1.status_code == 200)
-    assert (heart_o2.status_code == 200)
-    assert (heart_c1.status_code == 200)
-    assert (heart_c2.status_code == 200)
 
 if __name__ == '__main__':
     dictionary = {}
