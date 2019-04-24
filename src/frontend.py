@@ -198,7 +198,7 @@ if __name__ == '__main__':
     catalogs = [CATALOG_SERVER_1, CATALOG_SERVER_2]
     orders = [ORDER_SERVER_1, ORDER_SERVER_2]
 
-    scheduler = BackgroundScheduler()
+    scheduler = BackgroundScheduler({'apscheduler.timezone': 'UTC'})
     job = scheduler.add_job(heartbeat, 'interval', seconds=5)
     scheduler.start()
 

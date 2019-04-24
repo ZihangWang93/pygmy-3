@@ -167,7 +167,6 @@ if __name__ == '__main__':
     resynced = False
 
     r = requests.get(FRONTEND_SERVER + 'crashed?id=' + str(server_id))
-    print(r.text, type(r.text))
     if r.text == 'True':
         # re-sync process in case of a failure
         for i in range(len(CATALOG_SERVERS)):
@@ -177,7 +176,6 @@ if __name__ == '__main__':
                 print('Successfully Resynced with Catalog Server', i + 1)
                 resynced = True
     else:
-        global books
         json.dump(books, open('catalog.json', 'w'))
 
-    app.run(host='0.0.0.0', port=S.ips['catalog' + str(server_id + 1)][1], debug=False)
+app.run(host='0.0.0.0', port=S.ips['catalog' + str(server_id + 1)][1], debug=False)

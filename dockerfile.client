@@ -1,0 +1,8 @@
+FROM python:3.6-alpine
+WORKDIR /app
+
+COPY ./src /app
+RUN pip install --upgrade pip
+RUN pip install flask requests
+
+ENTRYPOINT ["python", "-u", "client.py"]

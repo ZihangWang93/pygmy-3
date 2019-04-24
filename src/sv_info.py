@@ -1,6 +1,6 @@
-ips = {'catalog1': ('elnux1', 3211),
-       'order1': ('elnux3', 3212),
-       'frontend': ('elnux7', 3213),
-       'catalog2': ('elnux3', 3211),
-       'order2': ('elnux7', 3212)
+ips = {'catalog1': ('172.17.0.4', 3211),
+       'order1': ('172.17.0.5', 3212),
+       'frontend': ('172.17.0.2', 3213),
+       'catalog2': ('172.17.0.3', 3214),
+       'order2': ('172.17.0.6', 3215)
        }
