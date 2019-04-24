@@ -66,7 +66,7 @@ def search():
             return dictionary.get(topic)
         else:
             print('Starting a search for topic', topic)
-            c_state = get_catalog_server_id()
+            c_state = int(get_catalog_server_id()['cid'])
             r = requests.get(catalogs[c_state] + 'query?topic=' + topic)
             dictionary[topic] = r.text
             with open('times/frontend_search_time.txt', 'a') as f:
@@ -90,7 +90,7 @@ def lookup():
             return dictionary.get(item_number)
         else:
             print('Starting a lookup for item', book_names[str(item_number)])
-            c_state = get_catalog_server_id()
+            c_state = int(get_catalog_server_id()['cid'])
             r = requests.get(catalogs[c_state] + 'query?item=' + str(item_number))
             dictionary[item_number] = r.text
             with open('./times/frontend_lookup_time.txt', 'a') as f:
@@ -107,7 +107,7 @@ def buy():
     if item_number is not None:
         print('Starting a buy request for item', book_names[str(item_number)])
         frontend_buy_start_time = time()
-        o_state = get_order_server_id()
+        o_state = int(get_order_server_id()['oid'])
         r = requests.get(orders[o_state] + 'buy?item=' + str(item_number))
         if r.status_code != 200 and not o_state_heart[o_state]:
             r = requests.get(orders[int(get_order_server_id()['oid'])] + 'buy?item=' + str(item_number))
