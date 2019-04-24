@@ -3,8 +3,9 @@ import os
 import random
 from time import sleep, time
 
-import pandas as pd
 import requests
+
+import sv_info as S
 
 # Initializing the book names as per the assignment
 book_names = {'1': 'How to get a good grade in 677 in 20 minutes a day',
@@ -74,12 +75,12 @@ def test_response_times(num_req=10, mode='search'):
 
 
 if __name__ == '__main__':
-    df = pd.read_csv('sv_info.csv')
-    CATALOG_SERVER_1 = 'http://' + str(df['IP'][0]) + ':' + str(df['Port'][0]) + '/'
-    ORDER_SERVER_1 = 'http://' + str(df['IP'][1]) + ':' + str(df['Port'][1]) + '/'
-    FRONTEND_SERVER = 'http://' + str(df['IP'][2]) + ':' + str(df['Port'][2]) + '/'
-    CATALOG_SERVER_2 = 'http://' + str(df['IP'][3]) + ':' + str(df['Port'][0]) + '/'
-    ORDER_SERVER_2 = 'http://' + str(df['IP'][4]) + ':' + str(df['Port'][1]) + '/'
+
+    CATALOG_SERVER_1 = 'http://' + S.ips['catalog1'][0] + ':' + str(S.ips['catalog1'][1]) + '/'
+    ORDER_SERVER_1 = 'http://' + S.ips['order1'][0] + ':' + str(S.ips['order1'][1]) + '/'
+    FRONTEND_SERVER = 'http://' + S.ips['frontend'][0] + ':' + str(S.ips['frontend'][1]) + '/'
+    CATALOG_SERVER_2 = 'http://' + S.ips['catalog2'][0] + ':' + str(S.ips['catalog2'][1]) + '/'
+    ORDER_SERVER_2 = 'http://' + S.ips['order2'][0] + ':' + str(S.ips['order2'][1]) + '/'
 
     # test_response_times(mode='search')  # Uncomment to run ART per-tier for this search()
     # test_response_times(mode='lookup') # Uncomment to run ART per-tier for this search()
@@ -93,7 +94,7 @@ if __name__ == '__main__':
             print('Starting a search for', topic)
             r = requests.get(FRONTEND_SERVER + 'search?topic=' + topic)
             print(r.status_code)
-            #assert r.status_code == 200, 'Search request failed!'
+            # assert r.status_code == 200, 'Search request failed!'
             pp_json(r.json())
 
         elif action == 'lookup':
@@ -101,7 +102,7 @@ if __name__ == '__main__':
             print('Starting a lookup for', book_names[str(item)])
             r = requests.get(FRONTEND_SERVER + 'lookup?item=' + str(item))
             print(r.status_code)
-            #assert r.status_code == 200, 'Lookup request failed!'
+            # assert r.status_code == 200, 'Lookup request failed!'
             pp_json(r.json())
 
         else:
@@ -109,9 +110,9 @@ if __name__ == '__main__':
             print('Trying to buy', book_names[str(item)])
             r = requests.get(FRONTEND_SERVER + 'buy?item=' + str(item))
             print(r.status_code)
-            #assert r.status_code == 200, 'Buy request failed!'
+            # assert r.status_code == 200, 'Buy request failed!'
             print('Successfully bought', book_names[str(item)])
 
-        #update_stock()
+        # update_stock()
 
         sleep(10)

@@ -3,9 +3,10 @@ import json
 import sys
 from time import time
 
-import pandas as pd
 import requests
 from flask import Flask, jsonify, request
+
+import sv_info as S
 
 # Initializing the book names as per the assignment
 book_names = {'1': 'How to get a good grade in 677 in 20 minutes a day',
@@ -155,12 +156,12 @@ def resync():
 
 if __name__ == '__main__':
     server_id = int(sys.argv[1])
-    df = pd.read_csv('sv_info.csv')
-    CATALOG_SERVER_1 = 'http://' + str(df['IP'][0]) + ':' + str(df['Port'][0]) + '/'
-    ORDER_SERVER_1 = 'http://' + str(df['IP'][1]) + ':' + str(df['Port'][1]) + '/'
-    FRONTEND_SERVER = 'http://' + str(df['IP'][2]) + ':' + str(df['Port'][2]) + '/'
-    CATALOG_SERVER_2 = 'http://' + str(df['IP'][3]) + ':' + str(df['Port'][0]) + '/'
-    ORDER_SERVER_2 = 'http://' + str(df['IP'][4]) + ':' + str(df['Port'][1]) + '/'
+    CATALOG_SERVER_1 = 'http://' + S.ips['catalog1'][0] + ':' + str(S.ips['catalog1'][1]) + '/'
+    ORDER_SERVER_1 = 'http://' + S.ips['order1'][0] + ':' + str(S.ips['order1'][1]) + '/'
+    FRONTEND_SERVER = 'http://' + S.ips['frontend'][0] + ':' + str(S.ips['frontend'][1]) + '/'
+    CATALOG_SERVER_2 = 'http://' + S.ips['catalog2'][0] + ':' + str(S.ips['catalog2'][1]) + '/'
+    ORDER_SERVER_2 = 'http://' + S.ips['order2'][0] + ':' + str(S.ips['order2'][1]) + '/'
+
     CATALOG_SERVERS = [CATALOG_SERVER_1, CATALOG_SERVER_2]
 
     resynced = False
@@ -179,4 +180,4 @@ if __name__ == '__main__':
         global books
         json.dump(books, open('catalog.json', 'w'))
 
-    app.run(host='0.0.0.0', port=df['Port'][0], debug=False)
+    app.run(host='0.0.0.0', port=S.ips['catalog' + str(server_id + 1)][1], debug=False)

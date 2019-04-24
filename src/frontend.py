@@ -2,10 +2,11 @@ import datetime
 import itertools as it
 from time import time
 
-import pandas as pd
 import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, request
+
+import sv_info as S
 
 DATETIME_FORMAT = '%m/%d %H:%M'
 
@@ -184,16 +185,15 @@ def heartbeat():
     else:
         c_state_heart[1] = True
 
-    
+
 if __name__ == '__main__':
     dictionary = {}
 
-    df = pd.read_csv('sv_info.csv')
-    CATALOG_SERVER_1 = 'http://' + str(df['IP'][0]) + ':' + str(df['Port'][0]) + '/'
-    ORDER_SERVER_1 = 'http://' + str(df['IP'][1]) + ':' + str(df['Port'][1]) + '/'
-    FRONTEND_SERVER = 'http://' + str(df['IP'][2]) + ':' + str(df['Port'][2]) + '/'
-    CATALOG_SERVER_2 = 'http://' + str(df['IP'][3]) + ':' + str(df['Port'][0]) + '/'
-    ORDER_SERVER_2 = 'http://' + str(df['IP'][4]) + ':' + str(df['Port'][1]) + '/'
+    CATALOG_SERVER_1 = 'http://' + S.ips['catalog1'][0] + ':' + str(S.ips['catalog1'][1]) + '/'
+    ORDER_SERVER_1 = 'http://' + S.ips['order1'][0] + ':' + str(S.ips['order1'][1]) + '/'
+    FRONTEND_SERVER = 'http://' + S.ips['frontend'][0] + ':' + str(S.ips['frontend'][1]) + '/'
+    CATALOG_SERVER_2 = 'http://' + S.ips['catalog2'][0] + ':' + str(S.ips['catalog2'][1]) + '/'
+    ORDER_SERVER_2 = 'http://' + S.ips['order2'][0] + ':' + str(S.ips['order2'][1]) + '/'
 
     catalogs = [CATALOG_SERVER_1, CATALOG_SERVER_2]
     orders = [ORDER_SERVER_1, ORDER_SERVER_2]
@@ -202,4 +202,4 @@ if __name__ == '__main__':
     job = scheduler.add_job(heartbeat, 'interval', seconds=5)
     scheduler.start()
 
-    app.run(host='0.0.0.0', port=df['Port'][2], debug=True)
+    app.run(host='0.0.0.0', port=S.ips['frontend'][1], debug=True)

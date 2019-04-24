@@ -16,7 +16,6 @@ pickleshare==0.7.4
 pluggy==0.9.0
 prompt-toolkit==1.0.15
 pyasn1==0.4.5
-pycups==1.9.73
 Pygments==2.2.0
 pyparsing==2.0.3
 PyYAML==3.13
