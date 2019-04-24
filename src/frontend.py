@@ -42,8 +42,8 @@ crashed = [False, False]
 @app.route('/crashed', methods=['GET'])
 def get_crashed():
     server_id = request.args.get('id', type=str)
-    if crashed[server_id]:
-        crashed[server_id] = False
+    if crashed[int(server_id)]:
+        crashed[int(server_id)] = False
         return True
     return False
 
