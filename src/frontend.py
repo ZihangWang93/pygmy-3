@@ -5,7 +5,7 @@ from time import time
 import pandas as pd
 import requests
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 DATETIME_FORMAT = '%m/%d %H:%M'
 
@@ -41,7 +41,7 @@ o_state_global = it.cycle([0, 1])
 def get_catalog_server_id():
     server_id = next(c_state_global)
     if c_state_heart[server_id]:
-        return {'cid': server_id}
+        return str(server_id)
     return get_catalog_server_id()
 
 
@@ -49,7 +49,7 @@ def get_catalog_server_id():
 def get_order_server_id():
     server_id = next(o_state_global)
     if o_state_heart[server_id]:
-        return {'oid': server_id}
+        return str(server_id)
     return get_order_server_id()
 
 
@@ -66,13 +66,13 @@ def search():
             return dictionary.get(topic)
         else:
             print('Starting a search for topic', topic)
-            c_state = int(get_catalog_server_id()['cid'])
+            c_state = int(get_catalog_server_id())
             r = requests.get(catalogs[c_state] + 'query?topic=' + topic)
             dictionary[topic] = r.text
             with open('times/frontend_search_time.txt', 'a') as f:
                 f.write(str(time() - frontend_search_start_time) + '\n')
             if r.status_code != 200 and not c_state_heart[c_state]:
-                r = requests.get(catalogs[int(get_catalog_server_id()['cid'])] + 'query?topic=' + topic)
+                r = requests.get(catalogs[int(get_catalog_server_id())] + 'query?topic=' + topic)
             assert r.status_code == 200, 'Search failed!'
             return r.text
 
@@ -90,13 +90,13 @@ def lookup():
             return dictionary.get(item_number)
         else:
             print('Starting a lookup for item', book_names[str(item_number)])
-            c_state = int(get_catalog_server_id()['cid'])
+            c_state = int(get_catalog_server_id())
             r = requests.get(catalogs[c_state] + 'query?item=' + str(item_number))
             dictionary[item_number] = r.text
             with open('./times/frontend_lookup_time.txt', 'a') as f:
                 f.write(str(time() - frontend_lookup_start_time) + '\n')
             if r.status_code != 200 and not c_state_heart[c_state]:
-                r = requests.get(catalogs[int(get_catalog_server_id()['cid'])] + 'query?item=' + str(item_number))
+                r = requests.get(catalogs[int(get_catalog_server_id())] + 'query?item=' + str(item_number))
             return r.text
 
 
@@ -107,10 +107,10 @@ def buy():
     if item_number is not None:
         print('Starting a buy request for item', book_names[str(item_number)])
         frontend_buy_start_time = time()
-        o_state = int(get_order_server_id()['oid'])
+        o_state = int(get_order_server_id())
         r = requests.get(orders[o_state] + 'buy?item=' + str(item_number))
         if r.status_code != 200 and not o_state_heart[o_state]:
-            r = requests.get(orders[int(get_order_server_id()['oid'])] + 'buy?item=' + str(item_number))
+            r = requests.get(orders[int(get_order_server_id())] + 'buy?item=' + str(item_number))
         with open('./times/frontend_buy_time.txt', 'a') as f:
             f.write(str(time() - frontend_buy_start_time) + '\n')
         return r.text
