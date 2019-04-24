@@ -1,11 +1,11 @@
 import datetime
+import itertools as it
 from time import time
 
 import pandas as pd
 import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, request
-import itertools as it
 
 DATETIME_FORMAT = '%m/%d %H:%M'
 
@@ -33,8 +33,8 @@ app = Flask(__name__)
 c_state_heart = [False, False]
 o_state_heart = [False, False]
 
-c_state_global = it.cycle([0,1])
-o_state_global = it.cycle([0,1])
+c_state_global = it.cycle([0, 1])
+o_state_global = it.cycle([0, 1])
 
 
 @app.route('/getcatalog', methods=['GET'])
@@ -50,7 +50,7 @@ def get_order_server_id():
     server_id = next(o_state_global)
     if o_state_heart[server_id]:
         return server_id
-    return get_catalog_server_id()
+    return get_order_server_id()
 
 
 # REST endpoint for search
@@ -120,13 +120,13 @@ def invalidate():
     if topic is not None:  # query by subject
         print('Invalidating ', topic)
         dictionary[topic] = None
-        return 'Succesfully invalidated topic'
+        return 'Successfully invalidated topic'
 
     id = request.args.get('item', type=int)
     if id is not None:  # query by item
         print('Invalidating', book_names[str(id)])
         dictionary[id] = None
-        return 'Succesfully invalidated item'
+        return 'Successfully invalidated item'
 
     return 'Invalidation Error'
 

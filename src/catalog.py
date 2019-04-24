@@ -1,7 +1,7 @@
 #!flask/bin/python
 import json
-from time import time
 import sys
+from time import time
 
 import pandas as pd
 import requests
@@ -141,7 +141,7 @@ def update_books():
 
 @app.route('/heartbeat', methods=['GET'])
 def heartbeat():
-    return 'Heartbeat succesful!'
+    return 'Heartbeat successful!'
 
 @app.route('/resync', methods=['GET'])
 def resync():
