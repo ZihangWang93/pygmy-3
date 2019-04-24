@@ -1,6 +1,7 @@
 #!flask/bin/python
 import datetime
-import os, sys
+import os
+import sys
 from time import time
 
 import pandas as pd
@@ -62,7 +63,7 @@ def buy_order():
 
 @app.route('/heartbeat', methods=['GET'])
 def heartbeat():
-    return 'Heartbeat succesful!'
+    return 'Heartbeat successful!'
 
 
 if __name__ == '__main__':

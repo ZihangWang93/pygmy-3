@@ -1,7 +1,7 @@
 #!flask/bin/python
 import json
-from time import time
 import sys
+from time import time
 
 import pandas as pd
 import requests
@@ -121,7 +121,7 @@ def update_books():
         if order:
             for i in range(len(CATALOG_SERVERS)):
                 if i != server_id:
-                    b = requests.post(CATALOG_SERVERS[i] + 'update?item=' + str(id), json={'delta': -1, 'order': 1})
+                    b = requests.post(CATALOG_SERVERS[i] + 'update?item=' + str(id), json={'delta': -1, 'order': 0})
         for b in books:
             if b['id'] == id:
                 b['stock'] += delta
@@ -141,7 +141,7 @@ def update_books():
 
 @app.route('/heartbeat', methods=['GET'])
 def heartbeat():
-    return 'Heartbeat succesful!'
+    return 'Heartbeat successful!'
 
 @app.route('/resync', methods=['GET'])
 def resync():
