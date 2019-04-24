@@ -5,7 +5,7 @@ from time import time
 import pandas as pd
 import requests
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask import Flask, request, jsonify
+from flask import Flask, request
 
 DATETIME_FORMAT = '%m/%d %H:%M'
 
@@ -138,10 +138,38 @@ def heartbeat():
     print('Getting Heartbeats')
     global c_state_heart
     global o_state_heart
-    o_state_heart = [(requests.get(ORDER_SERVER_1 + 'heartbeat').status_code == 200),
-                     (requests.get(ORDER_SERVER_2 + 'heartbeat').status_code == 200)]
-    c_state_heart = [(requests.get(CATALOG_SERVER_1 + 'heartbeat').status_code == 200),
-                     (requests.get(CATALOG_SERVER_2 + 'heartbeat').status_code == 200)]
+
+    try:
+        ro1 = requests.get(ORDER_SERVER_1 + 'heartbeat')
+    except:
+        print('Order Server 1 is down')
+        o_state_heart[0] = False
+    else:
+        o_state_heart[0] = True
+
+    try:
+        ro2 = requests.get(ORDER_SERVER_2 + 'heartbeat')
+    except:
+        print('Order Server 2 is down')
+        o_state_heart[1] = False
+    else:
+        o_state_heart[1] = True
+
+    try:
+        rc1 = requests.get(CATALOG_SERVER_1 + 'heartbeat')
+    except:
+        print('Catalog Server 1 is down')
+        c_state_heart[0] = False
+    else:
+        c_state_heart[0] = True
+
+    try:
+        rc2 = requests.get(CATALOG_SERVER_2 + 'heartbeat')
+    except:
+        print('Catalog Server 2 is down')
+        c_state_heart[1] = False
+    else:
+        c_state_heart[1] = True
 
 
 if __name__ == '__main__':
