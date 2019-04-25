@@ -10,14 +10,14 @@ There  is  one  config  file sv_info.py that has server information in the comma
 `docker build -f dockerfile.server_name -t image_name`
 , eg. `docker build . -f dockerfile.catalog -t catalog`.
 Do this for catalog, frontend, order and client.
-2. Create a subnet using `docker network create - -subnet=172.18.0.0/16 mynet123`
+2. Create a subnet using `docker network create --subnet=172.18.0.0/16 mynet123`
 3. Run the docker containers using:
 
-    `docker run - -net mynet123 --ip ip_here server_name server_id first_start` for catalog server
+    `docker run --net mynet123 --ip ip_here server_name server_id first_start` for catalog server
     
-    `docker run - -net mynet123 --ip ip_here server_name server_id ` for order server
+    `docker run --net mynet123 --ip ip_here server_name server_id ` for order server
     
-    `docker run - -net mynet123 --ip ip_here server_name` for frontend server and client
+    `docker run --net mynet123 --ip ip_here server_name` for frontend server and client
     
     server_id is zero-indexed (0/1 for the 2 replica case). first_start is 1 for a fresh boot of catalog, 0 for a boot after crash failure.
     
