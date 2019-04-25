@@ -1,7 +1,5 @@
-# 677 Lab 3
+# Documentation
 
-This directory should contain documentation for your project. You can include any files with documentation but the following files are REQUIRED:
-
-* Design doc
-* Output file showing sample output from runs
-* Performance doc showing data (bar graphs/plots, tables etc) of your measurements/experiments and simple conclusion
+* Design document
+* Output files showing sample output are present in the design doc
+* Performance evaluations are present in the design doc
