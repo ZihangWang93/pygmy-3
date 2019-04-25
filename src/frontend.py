@@ -38,6 +38,15 @@ o_state_global = it.cycle([0, 1])
 
 crashed = [False, False]
 
+leader = None
+
+
+@app.route('/leader', methods=['GET'])
+def leader0_set():
+    server_id = request.args.get('id', type=str)
+    global leader
+    leader = int(server_id)
+
 
 @app.route('/crashed', methods=['GET'])
 def get_crashed():
@@ -119,12 +128,13 @@ def buy():
         print('Starting a buy request for item', book_names[str(item_number)])
         frontend_buy_start_time = time()
         o_state = int(get_order_server_id())
-        r = requests.get(orders[o_state] + 'buy?item=' + str(item_number))
-        if r.status_code != 200 and not o_state_heart[o_state]:
-            r = requests.get(orders[int(get_order_server_id())] + 'buy?item=' + str(item_number))
-        with open('./times/frontend_buy_time.txt', 'a') as f:
-            f.write(str(time() - frontend_buy_start_time) + '\n')
-        return r.text
+        if not leader:
+            print("No leader elected for order servers yet")
+        else:
+            r = requests.get(orders[leader] + 'buy?item=' + str(item_number))
+            with open('./times/frontend_buy_time.txt', 'a') as f:
+                f.write(str(time() - frontend_buy_start_time) + '\n')
+            return r.text
 
 
 # Invalidate cache (called from catalog/order)
@@ -194,9 +204,10 @@ if __name__ == '__main__':
     FRONTEND_SERVER = 'http://' + str(df['IP'][2]) + ':' + str(df['Port'][2]) + '/'
     CATALOG_SERVER_2 = 'http://' + str(df['IP'][3]) + ':' + str(df['Port'][0]) + '/'
     ORDER_SERVER_2 = 'http://' + str(df['IP'][4]) + ':' + str(df['Port'][1]) + '/'
+    ORDER_SERVER_3 = 'http://' + str(df['IP'][5]) + ':' + str(df['Port'][1]) + '/'
 
     catalogs = [CATALOG_SERVER_1, CATALOG_SERVER_2]
-    orders = [ORDER_SERVER_1, ORDER_SERVER_2]
+    orders = [ORDER_SERVER_1, ORDER_SERVER_2, ORDER_SERVER_3]
 
     scheduler = BackgroundScheduler()
     job = scheduler.add_job(heartbeat, 'interval', seconds=5)
