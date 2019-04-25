@@ -1,3 +1,36 @@
-# 677 Lab 3
+# Turning the Pygmy into an Amazon: Replication, Caching and Consistency
 
-This is the Git repo for 677 Lab 3. See http://lass.cs.umass.edu/~shenoy/courses/spring19/labs/lab3.html for a description of the lab. The lab is due on April 24, 23:55 hrs. Prior to submitting your project, replace this README file with the one that explains how to setup and run your code. Be sure to provide enough details fo us to run it in order to grade it.
+
+# Environment Setup
+
+There  is  one  config  file sv_info.py that has server information in the comma-separated format:Type of Server, IP Address, Port. Modify the config files as required to setup the environment. There are four Python filescatalog.py, order.py, frontend.py and client.py- they represent the catalog server, order server, frontend server and the client respectively.
+
+# src File Descriptions
+
+catalog.py - Catalog server
+
+order.py - Order server
+
+frontend.py - Frontend server
+
+client.py - Client
+
+catalog.json - Book details for all books 
+
+order_log.txt - Transaction logs for order server
+
+sv_info.py - Config file for details of servers and their replicas
+
+times - Directory with Response Time logs for search, lookup and buy
+
+time_parser.py - Script to calculate ART (Average Response Time)
+
+# docs File Descriptions
+
+* CS677 Lab 3 Design Doc.pdf - Design document
+* Output file showing sample output from runs is included in the Design Document. 
+* Performance analysis is included in the Design Document.
+
+
+
+
