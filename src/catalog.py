@@ -178,4 +178,4 @@ if __name__ == '__main__':
     else:
         json.dump(books, open('catalog.json', 'w'))
 
-app.run(host='0.0.0.0', port=S.ips['catalog' + str(server_id + 1)][1], debug=False)
+app.run(host='0.0.0.0', port=S.ips['catalog' + str(server_id + 1)][1], debug=True)
