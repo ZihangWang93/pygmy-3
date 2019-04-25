@@ -198,8 +198,8 @@ if __name__ == '__main__':
     catalogs = [CATALOG_SERVER_1, CATALOG_SERVER_2]
     orders = [ORDER_SERVER_1, ORDER_SERVER_2]
 
-    scheduler = BackgroundScheduler({'apscheduler.timezone': 'UTC'})
-    job = scheduler.add_job(heartbeat, 'interval', seconds=5)
+    scheduler = BackgroundScheduler({'apscheduler.timezone': 'EST'})
+    job = scheduler.add_job(heartbeat, 'interval', seconds=5, max_instances=1)
     scheduler.start()
 
     app.run(host='0.0.0.0', port=S.ips['frontend'][1], debug=True)

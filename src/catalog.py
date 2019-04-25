@@ -156,6 +156,7 @@ def resync():
 
 if __name__ == '__main__':
     server_id = int(sys.argv[1])
+    first_time = int(sys.argv[2])
     CATALOG_SERVER_1 = 'http://' + S.ips['catalog1'][0] + ':' + str(S.ips['catalog1'][1]) + '/'
     ORDER_SERVER_1 = 'http://' + S.ips['order1'][0] + ':' + str(S.ips['order1'][1]) + '/'
     FRONTEND_SERVER = 'http://' + S.ips['frontend'][0] + ':' + str(S.ips['frontend'][1]) + '/'
@@ -165,17 +166,17 @@ if __name__ == '__main__':
     CATALOG_SERVERS = [CATALOG_SERVER_1, CATALOG_SERVER_2]
 
     resynced = False
-
-    r = requests.get(FRONTEND_SERVER + 'crashed?id=' + str(server_id))
-    if r.text == 'True':
-        # re-sync process in case of a failure
-        for i in range(len(CATALOG_SERVERS)):
-            if i != server_id and requests.get(CATALOG_SERVERS[i] + 'heartbeat').status_code == 200:
-                print('Trying to resync')
-                json.dump(requests.get(CATALOG_SERVERS[i] + 'resync').json(), open('catalog.json', 'w'))
-                print('Successfully Resynced with Catalog Server', i + 1)
-                resynced = True
-    else:
-        json.dump(books, open('catalog.json', 'w'))
+    if first_time == 0:
+        r = requests.get(FRONTEND_SERVER + 'crashed?id=' + str(server_id))
+        if r.text == 'True':
+            # re-sync process in case of a failure
+            for i in range(len(CATALOG_SERVERS)):
+                if i != server_id and requests.get(CATALOG_SERVERS[i] + 'heartbeat').status_code == 200:
+                    print('Trying to resync')
+                    json.dump(requests.get(CATALOG_SERVERS[i] + 'resync').json(), open('catalog.json', 'w'))
+                    print('Successfully Resynced with Catalog Server', i + 1)
+                    resynced = True
+        else:
+            json.dump(books, open('catalog.json', 'w'))
 
 app.run(host='0.0.0.0', port=S.ips['catalog' + str(server_id + 1)][1], debug=True)
